@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+sticky_todo_data.json
+sticky_todo_data.backup-*.json
+.DS_Store
+Thumbs.db
