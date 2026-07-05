@@ -371,9 +371,6 @@ class StickyTodoApp:
         self.open_note(note)
 
     def delete_note(self, note_id):
-        if len(self.notes) == 1:
-            messagebox.showinfo(TEXT["keep_one_title"], TEXT["keep_one_body"])
-            return
         window = self.windows.get(note_id)
         if not messagebox.askyesno(TEXT["delete_title"], TEXT["delete_body"]):
             return
