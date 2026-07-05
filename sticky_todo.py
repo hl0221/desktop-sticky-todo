@@ -528,7 +528,7 @@ class NoteWindow:
         self.close_button = RoundedButton(
             title_buttons,
             TEXT["close"],
-            command=self.close,
+            command=self.request_delete,
             width=34,
             height=30,
             radius=8,
@@ -1208,6 +1208,9 @@ class NoteWindow:
         self.window.attributes("-topmost", bool(self.top_var.get()))
         self.update_top_style()
         self.schedule_save()
+
+    def request_delete(self):
+        self.app.delete_note(self.note.id)
 
     def on_text_modified(self, _event=None):
         if self.text.edit_modified():
