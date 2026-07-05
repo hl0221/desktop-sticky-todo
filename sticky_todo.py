@@ -2,6 +2,7 @@ import calendar
 import ctypes
 import json
 import re
+import time
 import uuid
 from dataclasses import dataclass, field
 from datetime import date, datetime
@@ -322,6 +323,7 @@ class StickyTodoApp:
         self.root = tk.Tk()
         self.root.withdraw()
         self.windows = {}
+        self.last_add_at = 0
         self.notes = self.load_notes()
         if not self.notes:
             self.notes = [NoteData()]
@@ -351,13 +353,19 @@ class StickyTodoApp:
         self.windows[note.id] = window
 
     def add_note(self, source_window=None):
+        now = time.monotonic()
+        if now - self.last_add_at < 0.45:
+            return
+        self.last_add_at = now
         note = NoteData()
+        note.text_expanded = False
         if source_window:
             x = source_window.window.winfo_x() + 28
             y = source_window.window.winfo_y() + 28
-            width = max(source_window.window.winfo_width(), 360)
-            height = max(source_window.window.winfo_height(), 460)
-            note.geometry = f"{width}x{height}+{x}+{y}"
+            width = min(max(source_window.window.winfo_width(), 360), 430)
+            note.geometry = f"{width}x{COLLAPSED_WINDOW_HEIGHT}+{x}+{y}"
+        else:
+            note.geometry = f"390x{COLLAPSED_WINDOW_HEIGHT}+120+120"
         self.notes.append(note)
         self.save_notes()
         self.open_note(note)
