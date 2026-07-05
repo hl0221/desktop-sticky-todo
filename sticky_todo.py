@@ -21,12 +21,12 @@ WINDOW_CORNER_RADIUS = 20
 TEXT = {
     "default_title": "\u5f85\u8fa6\u4e8b\u9805",
     "window_title": "\u5f85\u8fa6\u4fbf\u7c64",
-    "date_unset": "\u8a2d\u5b9a\u65e5\u671f",
+    "date_unset": "\U0001f5d3",
     "today": "\u4eca\u5929",
     "clear": "\u6e05\u7a7a",
     "hide": "\u6536\u8d77",
-    "important": "\u91cd\u8981",
-    "urgent": "\u7dca\u6025",
+    "important": "\u2b50",
+    "urgent": "\u23f0",
     "pin": "\U0001f4cc",
     "keep_one_title": "\u4fdd\u7559\u4e00\u5f35\u4fbf\u7c64",
     "keep_one_body": "\u81f3\u5c11\u9700\u8981\u4fdd\u7559\u4e00\u5f35\u5f85\u8fa6\u4fbf\u7c64\u3002",
@@ -37,10 +37,21 @@ TEXT = {
     "day": "\u65e5",
     "status": "\u72c0\u614b",
     "add": "+",
-    "collapse": "v",
-    "expand": "^",
+    "collapse": "\u2304",
+    "expand": "\u2303",
     "minimize": "-",
-    "close": "X",
+    "close": "\u00d7",
+    "today_icon": "\u25ce",
+    "clear_icon": "\u232b",
+    "hide_icon": "\u2303",
+    "important_tip": "\u91cd\u8981",
+    "urgent_tip": "\u7dca\u6025",
+    "date_tip": "\u5b8c\u6210\u65e5\u671f",
+    "add_tip": "\u65b0\u589e\u4fbf\u7c64",
+    "pin_tip": "\u7f6e\u9802",
+    "collapse_tip": "\u6536\u8d77\u8f38\u5165\u5340",
+    "expand_tip": "\u5c55\u958b\u8f38\u5165\u5340",
+    "close_tip": "\u95dc\u9589",
 }
 
 MOJIBAKE_FIXES = {
@@ -64,6 +75,8 @@ COLORS = {
     "danger": "#c42b1c",
     "danger_hover": "#a81f14",
     "danger_soft": "#fff2f2",
+    "important": "#d99000",
+    "important_soft": "#fff7db",
 }
 
 STATUS_CONFIG = {
@@ -486,9 +499,10 @@ class NoteWindow:
             fill=COLORS["mica"],
             hover_fill="#dbeafe",
             parent_bg=COLORS["mica"],
-            font=("Segoe UI", 10),
+            font=("Segoe UI Symbol", 12),
         )
         self.fold_button.grid(row=0, column=0, padx=(0, 4))
+        ToolTip(self.fold_button, self.fold_tooltip_text)
         self.top_button = RoundedButton(
             title_buttons,
             TEXT["pin"],
@@ -499,9 +513,10 @@ class NoteWindow:
             fill=COLORS["mica"],
             hover_fill="#dbeafe",
             parent_bg=COLORS["mica"],
-            font=("Segoe UI", 10),
+            font=("Segoe UI Emoji", 11),
         )
         self.top_button.grid(row=0, column=1, padx=(0, 4))
+        ToolTip(self.top_button, lambda: TEXT["pin_tip"])
         self.close_button = RoundedButton(
             title_buttons,
             TEXT["close"],
@@ -513,9 +528,10 @@ class NoteWindow:
             hover_fill=COLORS["danger_soft"],
             fg=COLORS["text"],
             parent_bg=COLORS["mica"],
-            font=("Segoe UI", 10),
+            font=("Segoe UI Symbol", 13),
         )
         self.close_button.grid(row=0, column=2)
+        ToolTip(self.close_button, lambda: TEXT["close_tip"])
 
         self.text_panel = RoundedPanel(self.shell, COLORS["glass"], radius=18, parent_bg=COLORS["mica"])
         self.text_panel.grid(row=1, column=0, sticky="nsew", pady=(12, 10))
@@ -558,24 +574,26 @@ class NoteWindow:
             self.flag_controls,
             TEXT["important"],
             command=lambda: self.toggle_flag(self.important_var, self.on_flag_changed),
-            width=58,
+            width=46,
             height=38,
             radius=10,
             parent_bg=COLORS["mica"],
-            font=("Microsoft JhengHei UI", 10),
+            font=("Segoe UI Emoji", 13),
         )
         self.important_button.grid(row=0, column=0, padx=(0, 8))
+        ToolTip(self.important_button, lambda: TEXT["important_tip"])
         self.urgent_button = RoundedButton(
             self.flag_controls,
             TEXT["urgent"],
             command=lambda: self.toggle_flag(self.urgent_var, self.on_flag_changed),
-            width=58,
+            width=46,
             height=38,
             radius=10,
             parent_bg=COLORS["mica"],
-            font=("Microsoft JhengHei UI", 10),
+            font=("Segoe UI Emoji", 13),
         )
         self.urgent_button.grid(row=0, column=1)
+        ToolTip(self.urgent_button, lambda: TEXT["urgent_tip"])
 
         self.controls = tk.Frame(self.bottom, bg=COLORS["mica"])
         self.controls.grid(row=0, column=1, sticky="e")
@@ -587,9 +605,10 @@ class NoteWindow:
             height=38,
             radius=10,
             parent_bg=COLORS["mica"],
-            font=("Microsoft JhengHei UI", 11),
+            font=("Segoe UI Emoji", 13),
         )
         self.date_pill.grid(row=0, column=0, padx=(0, 8))
+        ToolTip(self.date_pill, self.date_tooltip_text)
         self.add_button = RoundedButton(
             self.controls,
             TEXT["add"],
@@ -601,9 +620,10 @@ class NoteWindow:
             hover_fill=COLORS["accent_hover"],
             fg="white",
             parent_bg=COLORS["mica"],
-            font=("Microsoft JhengHei UI", 15, "bold"),
+            font=("Segoe UI", 16, "bold"),
         )
         self.add_button.grid(row=0, column=1)
+        ToolTip(self.add_button, lambda: TEXT["add_tip"])
 
         self.resize_grip = tk.Frame(self.window, bg=COLORS["mica"], cursor="size_nw_se", width=8, height=8)
         self.resize_grip.place(relx=1, rely=1, anchor="se")
@@ -663,43 +683,46 @@ class NoteWindow:
         actions.grid(row=0, column=1, sticky="e")
         self.today_button = RoundedButton(
             actions,
-            TEXT["today"],
+            TEXT["today_icon"],
             command=self.set_today,
-            width=48,
+            width=38,
             height=32,
             radius=9,
             fill=COLORS["glass_soft"],
             hover_fill="#eaf4ff",
             parent_bg=COLORS["glass"],
-            font=("Microsoft JhengHei UI", 9),
+            font=("Segoe UI Symbol", 12),
         )
         self.today_button.grid(row=0, column=0, padx=(0, 6))
+        ToolTip(self.today_button, lambda: TEXT["today"])
         self.clear_button = RoundedButton(
             actions,
-            TEXT["clear"],
+            TEXT["clear_icon"],
             command=self.clear_date,
-            width=48,
+            width=38,
             height=32,
             radius=9,
             fill=COLORS["glass_soft"],
             hover_fill="#eaf4ff",
             parent_bg=COLORS["glass"],
-            font=("Microsoft JhengHei UI", 9),
+            font=("Segoe UI Symbol", 12),
         )
         self.clear_button.grid(row=0, column=1, padx=(0, 6))
+        ToolTip(self.clear_button, lambda: TEXT["clear"])
         self.hide_button = RoundedButton(
             actions,
-            TEXT["hide"],
+            TEXT["hide_icon"],
             command=self.hide_date_panel,
-            width=48,
+            width=38,
             height=32,
             radius=9,
             fill=COLORS["glass_soft"],
             hover_fill="#eaf4ff",
             parent_bg=COLORS["glass"],
-            font=("Microsoft JhengHei UI", 9),
+            font=("Segoe UI Symbol", 12),
         )
         self.hide_button.grid(row=0, column=2)
+        ToolTip(self.hide_button, lambda: TEXT["hide"])
 
         self.refresh_date_buttons()
         self.date_grid = tk.Frame(self.date_panel.inner, bg=COLORS["glass"])
@@ -893,18 +916,19 @@ class NoteWindow:
         for row, (status, config) in enumerate(STATUS_CONFIG.items()):
             button = RoundedButton(
                 panel.inner,
-                f"\u25cf  {config['label']}",
+                "\u25cf",
                 command=lambda value=status: self.choose_status(value),
-                width=122,
+                width=46,
                 height=34,
                 radius=9,
                 fill=config["soft"] if status == self.status_var.get() else COLORS["glass"],
                 hover_fill=config["soft"],
                 fg=config["color"],
                 parent_bg=COLORS["glass"],
-                font=("Microsoft JhengHei UI", 10),
+                font=("Segoe UI Symbol", 14),
             )
             button.grid(row=row, column=0, sticky="ew", padx=6, pady=(6 if row == 0 else 0, 6))
+            ToolTip(button, lambda value=config["label"]: value)
         self.status_menu.focus_force()
 
     def close_status_menu(self):
@@ -918,6 +942,15 @@ class NoteWindow:
 
     def status_tooltip_text(self):
         return f"{TEXT['status']}\uff1a{STATUS_CONFIG[self.status_var.get()]['label']}"
+
+    def fold_tooltip_text(self):
+        return TEXT["collapse_tip"] if self.text_expanded else TEXT["expand_tip"]
+
+    def date_tooltip_text(self):
+        selected = parse_iso_date(self.date_var.get())
+        if selected:
+            return f"{TEXT['date_tip']}\uff1a{selected.strftime('%Y.%m.%d')}"
+        return TEXT["date_tip"]
 
     def apply_status_style(self):
         config = STATUS_CONFIG[self.status_var.get()]
@@ -1117,14 +1150,26 @@ class NoteWindow:
     def update_flags_style(self):
         if not hasattr(self, "important_button"):
             return
-        self.style_toggle_button(self.important_button, self.important_var.get(), COLORS["accent"])
-        self.style_toggle_button(self.urgent_button, self.urgent_var.get(), COLORS["danger"])
+        self.style_toggle_button(
+            self.important_button,
+            self.important_var.get(),
+            COLORS["important"],
+            off_hover=COLORS["important_soft"],
+            off_fg=COLORS["important"],
+        )
+        self.style_toggle_button(
+            self.urgent_button,
+            self.urgent_var.get(),
+            COLORS["danger"],
+            off_hover=COLORS["danger_soft"],
+            off_fg=COLORS["danger"],
+        )
 
-    def style_toggle_button(self, button, selected, color):
+    def style_toggle_button(self, button, selected, color, off_hover="#edf6ff", off_fg=None):
         if selected:
             button.set_style(fill=color, hover_fill=color, fg="white")
         else:
-            button.set_style(fill="#ffffff", hover_fill="#edf6ff", fg=COLORS["soft_text"])
+            button.set_style(fill="#ffffff", hover_fill=off_hover, fg=off_fg or COLORS["soft_text"])
 
     def auto_mark_urgent(self):
         selected = parse_iso_date(self.date_var.get())
